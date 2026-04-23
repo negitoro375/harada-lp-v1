@@ -3,832 +3,570 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>原田さんのサイト設計ツール | WordPress & AI ハンズオン</title>
+  <title>原田さんのブログ開設ナビ | ネギトロブログ</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          animation: {
-            'fade-in': 'fadeIn 0.4s ease-out',
-            'slide-up': 'slideUp 0.5s ease-out',
-            'pulse-slow': 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
-            'typing': 'typing 1.8s steps(30,end)',
-          },
-          keyframes: {
-            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
-            slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-            typing: { from: { width: '0' }, to: { width: '100%' } },
-          }
-        }
-      }
-    }
-  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
     * { font-family: 'Noto Sans JP', sans-serif; }
-    .theme-pro    { --c1: #1e3a5f; --c2: #c9a84c; --c3: #2d3748; --bg: #f7f8fa; --card: #ffffff; --btn: #1e3a5f; --btn-text: #c9a84c; }
-    .theme-friend { --c1: #f97316; --c2: #22c55e; --c3: #78716c; --bg: #fffbf5; --card: #ffffff; --btn: #f97316; --btn-text: #ffffff; }
-    .theme-hunter { --c1: #facc15; --c2: #3b82f6; --c3: #ef4444; --bg: #0f172a; --card: #1e293b; --btn: #facc15; --btn-text: #0f172a; }
-    .themed-bg    { background-color: var(--bg); transition: background-color 0.5s; }
-    .themed-card  { background-color: var(--card); transition: background-color 0.5s; }
-    .accent-bar   { background: linear-gradient(90deg, var(--c1), var(--c2)); height: 4px; transition: background 0.5s; }
-    .btn-primary  { background-color: var(--btn); color: var(--btn-text); transition: all 0.3s; }
-    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-    .tag-accent   { background-color: var(--c2); }
-    .text-c1 { color: var(--c1); transition: color 0.5s; }
-    .text-c2 { color: var(--c2); transition: color 0.5s; }
-    .border-c1 { border-color: var(--c1); transition: border-color 0.5s; }
-    .bg-c1 { background-color: var(--c1); transition: background-color 0.5s; }
-    .bg-c2 { background-color: var(--c2); transition: background-color 0.5s; }
 
-    .selector-btn { transition: all 0.2s; }
-    .selector-btn.active { box-shadow: 0 0 0 3px var(--c1); transform: scale(1.02); }
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --pink:    #ff6b8a;
+      --pink-lt: #fff0f4;
+      --pink-bd: #ffc0cc;
+      --green:   #3ec47a;
+      --navy:    #1a2744;
+      --bg:      #f7f8fc;
+      --surface: #ffffff;
+      --text-hi: #1a2744;   /* high contrast heading */
+      --text-md: #4b5563;   /* body */
+      --text-lo: #9ca3af;   /* hint / label */
+      --radius:  20px;
+      --gap-section: 2rem;  /* 反復: セクション間は統一 */
+      --gap-inner:   1rem;  /* 反復: セクション内は統一 */
+    }
+    body { background: var(--bg); }
 
-    .ai-stream span { animation: fadeIn 0.15s ease-out both; }
-    .domain-chip { transition: all 0.3s; }
-    .domain-chip:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    /* ===== STEP CARD（反復：全ステップ同一構造） ===== */
+    .step-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(26,39,68,0.07);
+    }
 
-    /* dark theme text adjustments */
-    .theme-hunter .text-gray-800 { color: #e2e8f0; }
-    .theme-hunter .text-gray-600 { color: #94a3b8; }
-    .theme-hunter .text-gray-500 { color: #64748b; }
-    .theme-hunter .border-gray-200 { border-color: #334155; }
-    .theme-hunter .bg-gray-50 { background-color: #1e293b; }
-    .theme-hunter .bg-gray-100 { background-color: #334155; }
-    .theme-hunter .shadow-md { box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-    .theme-hunter .shadow-lg { box-shadow: 0 10px 15px rgba(0,0,0,0.5); }
+    /* ===== STEP HEADER（反復） ===== */
+    .step-label {
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--pink);
+    }
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--text-hi);
+      line-height: 1.3;
+      margin-top: 2px;
+    }
+    .step-badge {
+      background: var(--pink);
+      color: #fff;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 0.95rem; flex-shrink: 0;
+    }
 
-    .preview-wrap { transition: all 0.4s ease; }
-    .preview-wrap.changing { opacity: 0; transform: scale(0.97); }
+    /* ===== DIVIDER（反復：ステップ間区切り） ===== */
+    .step-divider {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 20px;
+      color: var(--text-lo); font-size: 0.75rem;
+    }
+    .step-divider::before, .step-divider::after {
+      content: ''; flex: 1; height: 1px; background: #e5e7eb;
+    }
 
-    .step-number { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; font-size: 1rem; flex-shrink: 0; }
+    /* ===== BUBBLE（反復：左右で統一スタイル） ===== */
+    .bubble {
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: var(--text-md);
+    }
+    .bubble-l {
+      background: var(--surface);
+      border: 2px solid var(--pink-bd);
+      border-radius: 4px 16px 16px 16px;
+    }
+    .bubble-r {
+      background: var(--pink-lt);
+      border: 2px solid var(--pink-bd);
+      border-radius: 16px 4px 16px 16px;
+    }
+    /* 整列：キャラ＋バブルの行 */
+    .chat-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .chat-row.right { flex-direction: row-reverse; }
+    .chat-row img { width: 56px; height: 56px; object-fit: contain; flex-shrink: 0; }
+
+    /* ===== BRAND CARD ===== */
+    .brand-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface);
+    }
+    .brand-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.09); }
+    .brand-card.selected {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255,107,138,0.18);
+    }
+    /* 対比：カード内タイトルと本文 */
+    .card-title { font-weight: 900; font-size: 1rem; color: var(--text-hi); }
+    .card-sub   { font-size: 0.75rem; color: var(--text-lo); margin-top: 1px; }
+    .card-hint  { font-size: 0.72rem; color: var(--text-md); background: #f9fafb; border-radius: 10px; padding: 8px 12px; margin-top: 10px; }
+    .card-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .card-tag   { font-size: 0.7rem; font-family: monospace; padding: 2px 8px; border-radius: 4px; }
+
+    /* ===== CHIP（反復） ===== */
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface);
+      border: 1.5px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .chip:hover { border-color: var(--pink); background: var(--pink-lt); transform: translateY(-2px); }
+    .chip.best  { border-color: var(--pink); background: var(--pink-lt); }
+
+    /* ===== CTA BUTTON（対比：最大コントラスト） ===== */
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px;
+      border-radius: 999px;
+      font-weight: 900; font-size: 1.05rem; color: #fff;
+      background: linear-gradient(135deg, var(--pink), #ff8fab);
+      box-shadow: 0 8px 24px rgba(255,107,138,0.45);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255,107,138,0.5); }
+
+    /* ===== PROGRESS（整列：中央固定） ===== */
+    .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; flex-shrink: 0; }
+    .progress-dot.active { background: var(--pink); box-shadow: 0 0 0 3px rgba(255,107,138,0.3); }
+
+    /* ===== RESULT CARD ===== */
+    .result-card {
+      background: var(--surface);
+      border: 2px solid var(--green);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .result-item {
+      background: #f9fafb; border-radius: 12px; padding: 12px 14px;
+    }
+    .result-label { font-size: 0.7rem; color: var(--text-lo); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.05em; }
+
+    /* ===== PROMPT ===== */
+    .prompt-box {
+      background: #0f172a; color: #94a3b8;
+      border-radius: 12px; padding: 18px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem; line-height: 1.85;
+      white-space: pre-wrap; min-height: 100px;
+    }
+    .prompt-box.active { color: #e2e8f0; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor::after { content: '▋'; color: var(--pink); animation: blink 0.8s infinite; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.35s ease-out both; }
   </style>
 </head>
-<body class="theme-pro">
+<body>
 
-<!-- ======== HERO ======== -->
-<div id="root" class="themed-bg min-h-screen transition-all duration-500">
-
-  <!-- Hero -->
-  <section class="relative overflow-hidden py-16 px-4">
-    <div class="accent-bar w-full absolute top-0 left-0"></div>
-    <div class="max-w-3xl mx-auto text-center pt-4">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-c1 text-white text-sm font-bold mb-6 shadow">
-        <span>✦</span><span>WordPress & AI ハンズオン 11,000円（税込）</span><span>✦</span>
-      </div>
-      <h1 class="text-3xl md:text-5xl font-black text-c1 leading-tight mb-4">
-        原田さんの<br/>
-        <span class="text-c2">「稼げるサイト」</span>を<br/>
-        今日、一緒に決めましょう。
-      </h1>
-      <p class="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
-        下の2ステップを動かすだけで、<br/>あなたのブログの<strong>世界観がリアルに見えます。</strong>
-      </p>
-      <div class="flex justify-center gap-3 flex-wrap">
-        <a href="#step1" class="btn-primary px-8 py-3 rounded-full text-lg font-bold shadow-lg">
-          ▶ まず試してみる
-        </a>
-      </div>
+<!-- ===== HEADER（整列：ロゴ左・リンク右） ===== -->
+<header style="background:var(--navy)" class="sticky top-0 z-50 px-5 py-3 flex items-center justify-between shadow-md">
+  <div class="flex items-center gap-3">
+    <img src="assets/characters/negitoro.png" alt="ネギトロ" class="w-11 h-11 object-contain" />
+    <div>
+      <div class="text-white font-black text-sm leading-tight">ネギトロ：ブログサポートプラン</div>
+      <div class="text-white/50 text-xs leading-tight">原田さん専用ブログ開設ナビ</div>
     </div>
-  </section>
+  </div>
+  <a href="https://negitoroblog.online/ipad-conoha-start/" target="_blank"
+     class="text-xs font-bold px-3 py-1.5 rounded-full border border-white/30 text-white/70 hover:bg-white/10 transition">
+    記事を読む →
+  </a>
+</header>
 
-  <!-- ======== STEP 1: Brand Axis ======== -->
-  <section id="step1" class="max-w-3xl mx-auto px-4 py-8">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="step-number bg-c1 text-white">1</div>
+<!-- ===== HERO（近接：タイトル・説明・プログレスを一塊に） ===== -->
+<section class="max-w-lg mx-auto px-5 pt-10 pb-2 text-center">
+  <div class="text-5xl mb-5">🎉</div>
+
+  <!-- 対比：h1は最大サイズ -->
+  <h1 class="text-3xl font-black leading-snug mb-3" style="color:var(--text-hi)">
+    原田さん、いよいよ<br/>
+    <span style="color:var(--pink)">ブログを始めよう！</span>
+  </h1>
+  <p class="text-sm mb-7" style="color:var(--text-md)">
+    ConoHa WINGで開設する前に、<strong>3分</strong>で<br/>
+    <strong>ドメイン名</strong>と<strong>ニックネーム</strong>を決めちゃおう📱
+  </p>
+
+  <!-- 近接：プログレスバーとラベルをまとめてひとつのブロックに -->
+  <div class="inline-flex flex-col items-center gap-2 px-6 py-3 rounded-2xl" style="background:var(--surface)">
+    <div class="flex items-center gap-2">
+      <div class="progress-dot active" id="dot1"></div>
+      <div class="h-px w-10 bg-gray-200"></div>
+      <div class="progress-dot" id="dot2"></div>
+      <div class="h-px w-10 bg-gray-200"></div>
+      <div class="progress-dot" id="dot3"></div>
+      <div class="h-px w-10 bg-gray-200"></div>
+      <div class="progress-dot" id="dot4"></div>
+    </div>
+    <div class="text-xs" style="color:var(--text-lo)">軸を選ぶ → 候補を見る → 選ぶ → ブログ開設</div>
+  </div>
+</section>
+
+<!-- ===== STEP 1（近接：ヘッダー→チャットを1カードに） ===== -->
+<section class="max-w-lg mx-auto px-5 py-6">
+  <div class="step-card">
+    <!-- ステップヘッダー（整列：バッジ＋ラベル＋タイトルを左揃え） -->
+    <div class="flex items-center gap-3 mb-5">
+      <div class="step-badge">1</div>
       <div>
-        <div class="text-xs font-bold text-c2 uppercase tracking-widest">Step 1</div>
-        <h2 class="text-xl font-black text-c1">ブランド軸を選んでください</h2>
-        <p class="text-sm text-gray-500">どの「強み」を前に出しますか？</p>
+        <div class="step-label">Step 1</div>
+        <div class="step-title">ドメイン、何にしたらいいんだろう？</div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Brand A -->
-      <button onclick="selectBrand('personal')" id="btn-personal"
-        class="selector-btn active themed-card rounded-2xl p-5 text-left shadow-md border-2 border-c1">
-        <div class="text-3xl mb-2">👤</div>
-        <div class="font-black text-c1 text-base mb-1">パーソナルブランド</div>
-        <div class="text-xs text-gray-500 mb-3">「原田さん」個人の信頼を蓄積</div>
-        <div class="flex flex-wrap gap-1">
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">harada-mobile.com</span>
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">harada-style.jp</span>
-        </div>
-      </button>
-
-      <!-- Brand B -->
-      <button onclick="selectBrand('theme')" id="btn-theme"
-        class="selector-btn themed-card rounded-2xl p-5 text-left shadow-md border-2 border-transparent">
-        <div class="text-3xl mb-2">📱</div>
-        <div class="font-black text-c1 text-base mb-1">テーマブランド</div>
-        <div class="text-xs text-gray-500 mb-3">格安スマホ・MNPの専門家として認知</div>
-        <div class="flex flex-wrap gap-1">
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">mobile-master.net</span>
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">mnp-hikaku.com</span>
-        </div>
-      </button>
-
-      <!-- Brand C -->
-      <button onclick="selectBrand('value')" id="btn-value"
-        class="selector-btn themed-card rounded-2xl p-5 text-left shadow-md border-2 border-transparent">
-        <div class="text-3xl mb-2">💰</div>
-        <div class="font-black text-c1 text-base mb-1">バリューブランド</div>
-        <div class="text-xs text-gray-500 mb-3">読者の「家計改善」という未来を約束</div>
-        <div class="flex flex-wrap gap-1">
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">papa-kozukai.com</span>
-          <span class="text-xs bg-gray-100 rounded px-2 py-0.5 font-mono">family-money-save.net</span>
-        </div>
-      </button>
+    <!-- チャット（整列：全行同じ img w-14 + bubble） -->
+    <div class="chat-row">
+      <img src="assets/characters/negitoro.png" alt="ネギトロ" />
+      <div class="bubble bubble-l">
+        ドメインは<strong>ブログの住所</strong>みたいなもの！<br/>
+        一度決めたら変えにくいから、一緒にじっくり考えよう😊
+      </div>
     </div>
-  </section>
+    <div class="chat-row right">
+      <img src="assets/characters/harada.png" alt="原田さん" />
+      <div class="bubble bubble-r">
+        何がいいのか全然わからない…どうやって決めたらいいの？
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- ======== STEP 2: Tone & Manner ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-8">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="step-number bg-c1 text-white">2</div>
+<!-- ===== DIVIDER（反復：ステップ間） ===== -->
+<div class="step-divider max-w-lg mx-auto px-5 my-1">↓</div>
+
+<!-- ===== STEP 2 ===== -->
+<section class="max-w-lg mx-auto px-5 py-3">
+  <div class="step-card">
+    <div class="flex items-center gap-3 mb-5">
+      <div class="step-badge">2</div>
       <div>
-        <div class="text-xs font-bold text-c2 uppercase tracking-widest">Step 2</div>
-        <h2 class="text-xl font-black text-c1">デザインの世界観を選んでください</h2>
-        <p class="text-sm text-gray-500">どんな「雰囲気」で読者と接しますか？</p>
+        <div class="step-label">Step 2</div>
+        <div class="step-title">こんな「軸」で選ぶのはどうかな？</div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Tone: Pro -->
-      <button onclick="selectTone('pro')" id="btn-pro"
-        class="selector-btn active themed-card rounded-2xl p-5 text-left shadow-md border-2 border-c1">
-        <div class="flex gap-1.5 mb-3">
-          <div class="w-5 h-5 rounded-full" style="background:#1e3a5f"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#c9a84c"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#2d3748"></div>
-        </div>
-        <div class="font-black text-c1 text-base mb-1">プロフェッショナル</div>
-        <div class="text-xs text-gray-500">信頼・知略。データ重視で誠実。</div>
-      </button>
-
-      <!-- Tone: Friend -->
-      <button onclick="selectTone('friend')" id="btn-friend"
-        class="selector-btn themed-card rounded-2xl p-5 text-left shadow-md border-2 border-transparent">
-        <div class="flex gap-1.5 mb-3">
-          <div class="w-5 h-5 rounded-full" style="background:#f97316"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#22c55e"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#78716c"></div>
-        </div>
-        <div class="font-black text-c1 text-base mb-1">フレンドリー</div>
-        <div class="text-xs text-gray-500">共感・伴走。隣のアニキ的な温かみ。</div>
-      </button>
-
-      <!-- Tone: Hunter -->
-      <button onclick="selectTone('hunter')" id="btn-hunter"
-        class="selector-btn themed-card rounded-2xl p-5 text-left shadow-md border-2 border-transparent">
-        <div class="flex gap-1.5 mb-3">
-          <div class="w-5 h-5 rounded-full" style="background:#facc15"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#3b82f6"></div>
-          <div class="w-5 h-5 rounded-full" style="background:#ef4444"></div>
-        </div>
-        <div class="font-black text-c1 text-base mb-1">ハンター</div>
-        <div class="text-xs text-gray-500">お得感・即効性。ワクワクさせる。</div>
-      </button>
-    </div>
-  </section>
-
-  <!-- ======== AI Domain Generation ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-6">
-    <div class="themed-card rounded-2xl p-6 shadow-lg border border-gray-200">
-      <div class="flex items-center gap-2 mb-4">
-        <span class="text-2xl">🤖</span>
-        <div>
-          <div class="font-black text-c1">AIドメイン提案エンジン</div>
-          <div class="text-xs text-gray-500">選択に合わせてリアルタイム生成</div>
-        </div>
-        <button onclick="runAI()" class="ml-auto btn-primary px-5 py-2 rounded-full text-sm font-bold shadow">
-          ▶ 生成する
-        </button>
-      </div>
-      <div id="ai-output" class="bg-gray-50 rounded-xl p-4 min-h-[80px] font-mono text-sm text-gray-700">
-        <span class="text-gray-400">← ボタンを押してAIの提案を見る</span>
+    <div class="chat-row">
+      <img src="assets/characters/midori.png" alt="みどり" />
+      <div class="bubble bubble-l">
+        ドメイン選びは<strong>「何を前に出したいか」</strong>で考えると迷わないですよ！<br/>
+        3つの軸から、ピンときたものを選んでみて🌿
       </div>
     </div>
-  </section>
+    <div class="chat-row right mb-5">
+      <img src="assets/characters/harada.png" alt="原田さん" />
+      <div class="bubble bubble-r">
+        なるほど！軸か〜。どれが自分に合ってるかな…
+      </div>
+    </div>
 
-  <!-- ======== LIVE PREVIEW ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-8">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="step-number bg-c2 text-white">→</div>
+    <!-- 近接：カード3枚をひとまとまりに -->
+    <div class="flex flex-col gap-3 mb-5">
+
+      <!-- Personal -->
+      <div class="brand-card selected" id="card-personal" onclick="selectBrand('personal')">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">👤</span>
+          <div class="flex-1">
+            <div class="card-title">パーソナルブランド軸</div>
+            <div class="card-sub">「原田さん個人」の信頼を積み上げる</div>
+          </div>
+          <span id="check-personal" class="text-xl font-black" style="color:var(--pink)">✓</span>
+        </div>
+        <div class="card-hint">💡 顔出し・実名でやりたい人、ファンをつくりたい人に向いてる</div>
+        <div class="card-tags">
+          <span class="card-tag" style="background:#fff0f4;color:var(--pink);border:1px solid var(--pink-bd)">harada-mobile.com</span>
+          <span class="card-tag" style="background:#fff0f4;color:var(--pink);border:1px solid var(--pink-bd)">harada-style.jp</span>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="brand-card" id="card-theme" onclick="selectBrand('theme')">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📱</span>
+          <div class="flex-1">
+            <div class="card-title">テーマブランド軸</div>
+            <div class="card-sub">「格安SIM・MNPといえばここ」で認知</div>
+          </div>
+          <span id="check-theme" class="text-xl font-black opacity-0" style="color:var(--pink)">✓</span>
+        </div>
+        <div class="card-hint">💡 SEOで検索上位を狙いたい人・専門メディアをつくりたい人向け</div>
+        <div class="card-tags">
+          <span class="card-tag" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe">mobile-master.net</span>
+          <span class="card-tag" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe">mnp-hikaku.com</span>
+        </div>
+      </div>
+
+      <!-- Value -->
+      <div class="brand-card" id="card-value" onclick="selectBrand('value')">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">💰</span>
+          <div class="flex-1">
+            <div class="card-title">バリューブランド軸</div>
+            <div class="card-sub">読者の「節約・家計改善」という未来を約束</div>
+          </div>
+          <span id="check-value" class="text-xl font-black opacity-0" style="color:var(--pink)">✓</span>
+        </div>
+        <div class="card-hint">💡 パパ層・ファミリー層に共感で刺さるコンテンツをつくりたい人向け</div>
+        <div class="card-tags">
+          <span class="card-tag" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">papa-kozukai.com</span>
+          <span class="card-tag" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">family-money-save.net</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 対比：CTAは最大コントラスト・中央配置 -->
+    <div class="text-center">
+      <button onclick="generateCandidates()" class="btn-cta">
+        ⚡ AIに候補を出してもらう
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="step-divider max-w-lg mx-auto px-5 my-1">↓</div>
+
+<!-- ===== STEP 3 ===== -->
+<section class="max-w-lg mx-auto px-5 py-3" id="section-ai" style="display:none">
+  <div class="step-card">
+    <div class="flex items-center gap-3 mb-5">
+      <div class="step-badge">3</div>
       <div>
-        <div class="text-xs font-bold text-c2 uppercase tracking-widest">Live Preview</div>
-        <h2 class="text-xl font-black text-c1">あなたのブログ、こんな感じになります</h2>
+        <div class="step-label">Step 3</div>
+        <div class="step-title">候補が出たよ！選んでみて😊</div>
       </div>
     </div>
 
-    <!-- Browser chrome -->
-    <div class="rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-      <!-- URL bar -->
-      <div class="bg-gray-100 px-4 py-2.5 flex items-center gap-2 border-b border-gray-200">
-        <div class="flex gap-1.5">
-          <div class="w-3 h-3 rounded-full bg-red-400"></div>
-          <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-          <div class="w-3 h-3 rounded-full bg-green-400"></div>
+    <div class="chat-row">
+      <img src="assets/characters/negitoro.png" alt="ネギトロ" />
+      <div class="bubble bubble-l" id="ai-comment">考えてるよ〜⌛</div>
+    </div>
+    <div class="chat-row right mb-5">
+      <img src="assets/characters/aoi.png" alt="あおい" />
+      <div class="bubble bubble-r">
+        ドメインとニックネームを両方ピックアップしたよ。<br/>
+        気に入ったものをタップして選んでね📋
+      </div>
+    </div>
+
+    <!-- 近接：ドメイン・ニックネームを隣接して配置 -->
+    <div class="flex flex-col gap-3 mb-4">
+      <!-- Domain -->
+      <div class="rounded-2xl border-2 p-4" style="border-color:var(--pink-bd);background:var(--pink-lt)">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-base">🌐</span>
+          <!-- 対比：セクション内タイトルは太く -->
+          <div class="font-black text-sm" style="color:var(--text-hi)">ドメイン候補</div>
+          <span class="text-xs ml-auto" style="color:var(--text-lo)">タップして選択</span>
         </div>
-        <div id="url-bar" class="flex-1 bg-white rounded px-3 py-1 text-xs text-gray-500 font-mono border border-gray-200">
-          harada-mobile.com
-        </div>
+        <div id="domain-chips" class="flex flex-wrap gap-2"></div>
       </div>
 
-      <!-- Preview content -->
-      <div id="preview-wrap" class="preview-wrap themed-bg">
-
-        <!-- Nav -->
-        <nav class="px-6 py-3 flex items-center justify-between border-b border-gray-200">
-          <div id="preview-logo" class="font-black text-xl text-c1">原田のモバイルブログ</div>
-          <div class="flex gap-4 text-sm text-gray-500">
-            <span>記事</span><span>比較表</span><span>お問合せ</span>
-          </div>
-        </nav>
-        <div class="accent-bar w-full"></div>
-
-        <!-- Hero article -->
-        <div class="px-6 pt-8 pb-4">
-          <div id="preview-badge" class="inline-block text-xs font-bold px-3 py-1 rounded-full bg-c2 text-white mb-3">
-            NEW
-          </div>
-          <h2 id="preview-title" class="text-2xl font-black text-c1 leading-tight mb-3">
-            格安SIM完全ガイド2024：<br/>月5,000円節約できた私の選び方
-          </h2>
-          <p id="preview-desc" class="text-gray-600 text-sm leading-relaxed mb-4">
-            3大キャリアを使い続けていた私が、実際に乗り換えてみた結果と、
-            比較検討した全データを公開します。
-          </p>
-          <button class="btn-primary px-6 py-2.5 rounded-full text-sm font-bold shadow">
-            続きを読む →
-          </button>
+      <!-- Nickname -->
+      <div class="rounded-2xl border-2 p-4" style="border-color:#bbf7d0;background:#f0fdf4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-base">✏️</span>
+          <div class="font-black text-sm" style="color:var(--text-hi)">ニックネーム候補</div>
+          <span class="text-xs ml-auto" style="color:var(--text-lo)">タップして選択</span>
         </div>
+        <div id="nickname-chips" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
 
-        <!-- Article cards -->
-        <div class="px-6 py-4 grid grid-cols-2 gap-3">
-          <div id="card1" class="themed-card rounded-xl p-4 shadow-md border border-gray-200">
-            <div class="text-xs font-bold text-c2 mb-1.5" id="card1-tag">MNP完全攻略</div>
-            <div class="text-sm font-bold text-c1" id="card1-title">乗り換えで3万円もらえる裏技</div>
-          </div>
-          <div id="card2" class="themed-card rounded-xl p-4 shadow-md border border-gray-200">
-            <div class="text-xs font-bold text-c2 mb-1.5" id="card2-tag">比較レビュー</div>
-            <div class="text-sm font-bold text-c1" id="card2-title">楽天 vs ahamo 徹底比較</div>
-          </div>
+    <!-- 選んだ組み合わせ（近接：2項目を横並び） -->
+    <div id="selection-result" class="hidden result-card mb-5 fade-up">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-base">✅</span>
+        <div class="font-black text-sm" style="color:var(--text-hi)">選んだ組み合わせ</div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="result-item">
+          <div class="result-label">DOMAIN</div>
+          <div id="selected-domain" class="font-mono font-bold text-sm" style="color:var(--pink)">-</div>
         </div>
-
-        <!-- CTA banner -->
-        <div id="cta-banner" class="mx-6 mb-6 bg-c1 rounded-xl px-6 py-4 flex items-center justify-between">
-          <div>
-            <div id="cta-title" class="text-white font-black text-base">無料相談、受付中</div>
-            <div id="cta-sub" class="text-white/70 text-xs mt-0.5">LINEで気軽に聞いてください</div>
-          </div>
-          <button id="cta-btn" class="bg-c2 text-white font-bold text-sm px-5 py-2 rounded-full">
-            LINEで相談 →
-          </button>
+        <div class="result-item">
+          <div class="result-label">NICKNAME</div>
+          <div id="selected-nickname" class="font-bold text-sm" style="color:var(--green)">-</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ======== DOMAIN CHIPS ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-6">
-    <h3 class="font-black text-c1 text-lg mb-4">🎯 推奨ドメイン候補</h3>
-    <div id="domain-list" class="flex flex-wrap gap-3">
-      <!-- filled by JS -->
+    <!-- 背中押しキャラ -->
+    <div class="chat-row mb-5">
+      <img src="assets/characters/pink.png" alt="ピンク" />
+      <div class="bubble bubble-l">
+        決まったね！🎉 あとはネギトロブログの記事を見て<br/>
+        ConoHa WINGで開設するだけだよ✨
+      </div>
     </div>
-  </section>
 
-  <!-- ======== PROMPT GENERATOR ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-6">
-    <div class="themed-card rounded-2xl p-6 shadow-lg border border-gray-200">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-2xl">✨</span>
-        <div class="flex-1">
-          <div class="font-black text-c1">Claude Code用プロンプト 自動生成</div>
-          <div class="text-xs text-gray-500">選択した内容をそのまま実装指示に変換します</div>
-        </div>
-        <button onclick="generatePrompt()" id="gen-btn"
-          class="btn-primary px-5 py-2 rounded-full text-sm font-bold shadow whitespace-nowrap">
-          ⚡ 生成する
-        </button>
+    <!-- 対比：CTA最大 -->
+    <div class="rounded-2xl p-6 text-center mb-4" style="background:var(--pink-lt);border:2px solid var(--pink-bd)">
+      <div class="text-3xl mb-2">📖</div>
+      <!-- 対比：CTAタイトルは最大ウェイト -->
+      <div class="font-black text-lg mb-1" style="color:var(--text-hi)">次のステップはネギトロブログで！</div>
+      <div class="text-sm mb-5" style="color:var(--text-md)">
+        ConoHa WINGの申し込み手順・料金を<strong>画像つきで解説</strong>。<br/>
+        アフィリリンクもこちらから🙌
       </div>
+      <a href="https://negitoroblog.online/ipad-conoha-start/" target="_blank" class="btn-cta">
+        🍣 ネギトロブログの記事を見る →
+      </a>
+      <div class="text-xs mt-3" style="color:var(--text-lo)">※記事内のリンクからConoHa WINGに申し込めます</div>
+    </div>
 
-      <!-- Status badge -->
-      <div id="prompt-status" class="hidden text-xs font-bold text-c2 mb-2 flex items-center gap-1">
-        <span class="inline-block w-2 h-2 rounded-full bg-c2 animate-pulse"></span>
-        <span id="prompt-status-text">AIが設計中...</span>
+    <!-- Prompt（近接：タイトル・ボタン・出力を1ブロック） -->
+    <div class="rounded-2xl overflow-hidden" style="background:var(--navy)">
+      <div class="flex items-center gap-2 px-5 py-3 border-b border-white/10">
+        <span>✨</span>
+        <div class="font-black text-white text-sm flex-1">Claude Code 実装プロンプト</div>
+        <button onclick="generatePrompt()"
+          class="text-xs font-bold px-4 py-1.5 rounded-full text-white"
+          style="background:var(--pink)">生成する</button>
       </div>
-
-      <!-- Output area -->
-      <div id="prompt-output"
-        class="bg-gray-50 rounded-xl p-4 min-h-[120px] font-mono text-xs text-gray-700 leading-relaxed whitespace-pre-wrap hidden border border-gray-200"></div>
-
-      <!-- Copy button -->
-      <div id="copy-wrap" class="hidden mt-3 flex items-center justify-between">
-        <span class="text-xs text-gray-400">👆 このプロンプトをそのままClaude Codeに貼り付けてください</span>
-        <button onclick="copyPrompt()"
-          class="btn-primary px-4 py-1.5 rounded-full text-xs font-bold shadow flex items-center gap-1.5">
+      <div id="prompt-output" class="prompt-box px-5 py-4">← 「生成する」を押すとWordPress実装プロンプトが出ます</div>
+      <div id="copy-wrap" class="hidden px-5 py-2 flex justify-end border-t border-white/10">
+        <button onclick="copyPrompt()" class="text-xs flex items-center gap-1" style="color:var(--text-lo)">
           <span id="copy-icon">📋</span><span id="copy-label">コピー</span>
         </button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ======== VALUE PROP ======== -->
-  <section class="max-w-3xl mx-auto px-4 py-10">
-    <div class="themed-card rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-      <div class="text-4xl mb-3">💡</div>
-      <h3 class="text-2xl font-black text-c1 mb-3">このサービスでできること</h3>
-      <p class="text-gray-600 mb-6 max-w-lg mx-auto">
-        ConoHa WINGのWINGパックなら<strong>ドメイン2つ無料</strong>。
-        原田さんが最も伝えたいことを「ドメイン」と「デザイン」で表現し、
-        <strong>スマホ副業パパ層に刺さるブログ</strong>を今日中に開設できます。
-      </p>
-      <div class="grid grid-cols-3 gap-4 mb-8 text-center">
-        <div>
-          <div class="text-3xl font-black text-c1">3</div>
-          <div class="text-xs text-gray-500">ブランド軸</div>
-        </div>
-        <div>
-          <div class="text-3xl font-black text-c1">3</div>
-          <div class="text-xs text-gray-500">デザイン世界観</div>
-        </div>
-        <div>
-          <div class="text-3xl font-black text-c1">9</div>
-          <div class="text-xs text-gray-500">組み合わせパターン</div>
-        </div>
-      </div>
-      <div class="inline-flex items-center gap-2 bg-c1 text-white px-8 py-3 rounded-full font-black text-lg shadow-lg">
-        <span>¥11,000</span><span class="text-sm font-normal opacity-80">（税込）</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="text-center py-8 text-xs text-gray-400 border-t border-gray-200">
-    WordPress & AI ハンズオン — 原田様専用設計ツール
-  </footer>
-
-</div>
+<!-- ===== FOOTER ===== -->
+<footer class="text-center py-8 mt-8 border-t border-gray-200">
+  <img src="assets/characters/negitoro.png" alt="" class="w-10 h-10 mx-auto mb-2 opacity-70" />
+  <div class="text-xs" style="color:var(--text-lo)">ネギトロブログ presents — 原田さん専用ブログ開設ナビ</div>
+  <a href="https://negitoroblog.online/" target="_blank"
+     class="text-xs underline mt-1 inline-block" style="color:var(--text-lo)">negitoroblog.online</a>
+</footer>
 
 <script>
-// ===== STATE =====
 let brand = 'personal';
-let tone  = 'pro';
+let selectedDomain = '';
+let selectedNickname = '';
 
-// ===== DATA =====
-const brandData = {
+const data = {
   personal: {
-    domains: ['harada-mobile.com', 'harada-style.jp', 'harada-blog.net', 'harada-sim.com'],
-    logo: '原田のモバイルブログ',
-    title: '格安SIM完全ガイド2024：<br/>月5,000円節約できた私の選び方',
-    desc: '3大キャリアを使い続けていた私が、実際に乗り換えてみた結果と、比較検討した全データを公開します。',
-    cta: '無料相談、受付中',
-    ctaSub: 'LINEで気軽に聞いてください',
-    card1tag: 'MNP完全攻略', card1title: '乗り換えで3万円もらえる裏技',
-    card2tag: '比較レビュー', card2title: '楽天 vs ahamo 徹底比較',
-    aiPrompt: '原田さんの個人ブランドに合うドメイン',
+    comment: '「原田さん」の名前を使った<strong>個人ブランド型</strong>の候補だよ！<br/>読者が「原田さんのブログ」として覚えてくれやすいのが強みです✨',
+    domains:   [{name:'harada-mobile.com',best:true},{name:'harada-style.jp',best:false},{name:'harada-sim.net',best:false},{name:'harada-blog.com',best:false},{name:'harada-mnp.net',best:false}],
+    nicknames: [{name:'モバイルハラダ📱',best:true},{name:'はらだブロガー',best:false},{name:'ハラちゃんねる🎙️',best:false},{name:'原田のスマホ日記',best:false},{name:'ハラダのモバイルラボ🔬',best:false}],
   },
   theme: {
-    domains: ['mobile-master.net', 'mnp-hikaku.com', 'sim-lab.jp', 'carrier-navi.net'],
-    logo: 'MobileMaster | 格安SIM専門',
-    title: '【2024年最新】格安SIM比較ランキング：<br/>専門家が選ぶ本当のNo.1',
-    desc: '独自のスコアリングで主要10社を徹底比較。データ通信量・通話品質・コスパを多角的に検証しました。',
-    cta: '無料診断ツールを使う',
-    ctaSub: '3分でベストSIMがわかります',
-    card1tag: '専門家解説', card1title: 'povo2.0が最強な3つの理由',
-    card2tag: 'データ検証', card2title: '通信速度ランキング実測値',
-    aiPrompt: '格安スマホ・MNP専門サイトに合うドメイン',
+    comment: '「格安SIM・MNP専門メディア」としての<strong>テーマ特化型</strong>の候補だよ！<br/>SEOで検索上位を狙いたい人にぴったりです📈',
+    domains:   [{name:'mobile-master.net',best:true},{name:'mnp-hikaku.com',best:false},{name:'sim-lab.jp',best:false},{name:'carrier-navi.net',best:false},{name:'sim-choice.com',best:false}],
+    nicknames: [{name:'格安SIM番長⚡',best:true},{name:'MNP研究員ハラダ🔬',best:false},{name:'スマホ節約アナリスト',best:false},{name:'モバイルマスター📱',best:false},{name:'SIM選びの専門家',best:false}],
   },
   value: {
-    domains: ['papa-kozukai.com', 'family-money-save.net', 'papa-sim.jp', 'okozukai-up.com'],
-    logo: 'パパのお小遣い増やす会📱',
-    title: 'スマホ代だけで月1万円浮かせた！<br/>パパのための格安SIM乗り換え術',
-    desc: '子供の教育費で毎月ピンチなパパへ。スマホ代を見直すだけで驚くほど家計が楽になります。実体験レポート。',
-    cta: '今すぐ節約をはじめる 💰',
-    ctaSub: '無料シミュレーターはこちら',
-    card1tag: '節約術', card1title: '家族4人のスマホ代を半額に',
-    card2tag: '体験談', card2title: '育休中に月3万円削減した話',
-    aiPrompt: 'パパ層・家計改善ブログに合うドメイン',
+    comment: '「節約・家計改善」という<strong>読者へのベネフィットを前面に出した</strong>候補だよ！<br/>パパ層・ファミリー層にすごく刺さる設計です💰',
+    domains:   [{name:'papa-kozukai.com',best:true},{name:'family-money-save.net',best:false},{name:'papa-sim.jp',best:false},{name:'okozukai-up.com',best:false},{name:'papa-mobile-hack.net',best:false}],
+    nicknames: [{name:'節約パパ原田💰',best:true},{name:'お小遣いアップ父さん',best:false},{name:'スマホ代カットパパ📉',best:false},{name:'家計改善パパ🏠',best:false},{name:'パパの節約術',best:false}],
   },
 };
 
-const toneData = {
-  pro:    { cls: 'theme-pro',    label: 'プロフェッショナル', badge: 'EXPERT PICK' },
-  friend: { cls: 'theme-friend', label: 'フレンドリー',       badge: '🟢 おすすめ！' },
-  hunter: { cls: 'theme-hunter', label: 'ハンター',           badge: '🔥 激アツ情報' },
+const prompts = {
+  personal: (d,n) => `# WordPress ブログ実装依頼（ネギトロブログ経由）\n\n## サイト概要\n- ドメイン: ${d}\n- ニックネーム: ${n}\n- ブランド軸: パーソナルブランド（原田さん個人の信頼性）\n- ターゲット: 格安スマホで月5,000円節約したい30〜40代パパ層\n- マネタイズ: 格安SIM・MNPアフィリエイト\n\n## インフラ\n- ホスティング: ConoHa WING（WINGパック）\n- CMS: WordPress（Cocoonテーマ）\n\n## 実装タスク\n1. Cocoonテーマ初期設定（カラー・フォント・ヘッダー）\n2. トップページにピックアップ記事3件表示\n3. プロフィールページ（原田さんの実体験ベース）\n4. アフィリエイトCTAボタンのスタイリング\n5. お問い合わせフォーム（Contact Form 7）\n\n以上をステップバイステップで実装してください。`,
+  theme:    (d,n) => `# WordPress ブログ実装依頼（ネギトロブログ経由）\n\n## サイト概要\n- ドメイン: ${d}\n- ニックネーム: ${n}\n- ブランド軸: テーマブランド（格安SIM・MNP専門メディア）\n- ターゲット: 正確な情報でSIMを選びたい30〜40代\n- マネタイズ: 比較記事 + 高単価MNPアフィリエイト\n\n## インフラ\n- ホスティング: ConoHa WING（WINGパック）\n- CMS: WordPress（Cocoonテーマ）\n\n## 実装タスク\n1. Cocoonテーマ初期設定（専門メディア風）\n2. 格安SIM比較表（TablePressプラグイン）\n3. ランキング形式トップページ\n4. SEO設定（All in One SEO Pack）\n5. 速度最適化（WP Fastest Cache）\n\n以上をステップバイステップで実装してください。`,
+  value:    (d,n) => `# WordPress ブログ実装依頼（ネギトロブログ経由）\n\n## サイト概要\n- ドメイン: ${d}\n- ニックネーム: ${n}\n- ブランド軸: バリューブランド（家計改善・節約）\n- ターゲット: 子育て中で固定費を削減したい30〜40代パパ\n- マネタイズ: 格安SIMアフィリエイト + 節約系案件\n\n## インフラ\n- ホスティング: ConoHa WING（WINGパック）\n- CMS: WordPress（Cocoonテーマ）\n\n## 実装タスク\n1. Cocoonテーマ初期設定（温かみのある配色）\n2. 節約シミュレーターウィジェット（JS実装）\n3. 体験談記事テンプレート\n4. LINE誘導ウィジェットの設置\n5. スマホ最適化レイアウト\n\n以上をステップバイステップで実装してください。`,
 };
 
-// ===== SELECT FUNCTIONS =====
 function selectBrand(b) {
   brand = b;
   ['personal','theme','value'].forEach(x => {
-    const btn = document.getElementById('btn-' + x);
-    btn.classList.toggle('active', x === b);
-    btn.classList.toggle('border-c1', x === b);
-    btn.classList.toggle('border-transparent', x !== b);
+    document.getElementById('card-' + x).classList.toggle('selected', x === b);
+    document.getElementById('check-' + x).classList.toggle('opacity-0', x !== b);
   });
-  updatePreview();
 }
 
-function selectTone(t) {
-  tone = t;
-  ['pro','friend','hunter'].forEach(x => {
-    const btn = document.getElementById('btn-' + x);
-    btn.classList.toggle('active', x === t);
-    btn.classList.toggle('border-c1', x === t);
-    btn.classList.toggle('border-transparent', x !== t);
-  });
-  applyTheme(t);
-  updatePreview();
+function generateCandidates() {
+  const d = data[brand];
+  selectedDomain = ''; selectedNickname = '';
+  const sec = document.getElementById('section-ai');
+  sec.style.display = 'block';
+  document.getElementById('dot2').classList.add('active');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => { document.getElementById('ai-comment').innerHTML = d.comment; }, 600);
+
+  ['domain-chips', 'nickname-chips'].forEach(id => document.getElementById(id).innerHTML = '');
+
+  d.domains.forEach((item, i) => setTimeout(() => {
+    const c = document.createElement('button');
+    c.className = 'chip fade-up' + (item.best ? ' best' : '');
+    c.innerHTML = `<span class="font-mono">${item.name}</span>${item.best ? '<span class="text-xs px-2 py-0.5 rounded-full text-white font-black" style="background:var(--pink);font-family:sans-serif">イチオシ</span>' : ''}`;
+    c.onclick = () => pickDomain(item.name, c);
+    document.getElementById('domain-chips').appendChild(c);
+  }, i * 110));
+
+  d.nicknames.forEach((item, i) => setTimeout(() => {
+    const c = document.createElement('button');
+    c.className = 'chip fade-up' + (item.best ? ' best' : '');
+    c.style.borderColor = item.best ? 'var(--green)' : '';
+    c.style.background  = item.best ? '#f0fdf4' : '';
+    c.innerHTML = `<span>${item.name}</span>${item.best ? '<span class="text-xs px-2 py-0.5 rounded-full text-white font-black" style="background:var(--green);font-family:sans-serif">おすすめ</span>' : ''}`;
+    c.onclick = () => pickNickname(item.name, c);
+    document.getElementById('nickname-chips').appendChild(c);
+  }, i * 110 + 120));
 }
 
-function applyTheme(t) {
-  const root = document.getElementById('root');
-  root.className = root.className.replace(/theme-\w+/, '');
-  root.classList.add(toneData[t].cls);
+function pickDomain(name, el) {
+  selectedDomain = name;
+  document.querySelectorAll('#domain-chips .chip').forEach(c => { c.style.borderColor = ''; c.style.background = ''; });
+  el.style.borderColor = 'var(--pink)'; el.style.background = 'var(--pink-lt)';
+  updateResult();
+}
+function pickNickname(name, el) {
+  selectedNickname = name;
+  document.querySelectorAll('#nickname-chips .chip').forEach(c => { c.style.borderColor = ''; c.style.background = ''; });
+  el.style.borderColor = 'var(--green)'; el.style.background = '#f0fdf4';
+  updateResult();
+}
+function updateResult() {
+  const wrap = document.getElementById('selection-result');
+  wrap.classList.remove('hidden');
+  document.getElementById('selected-domain').textContent   = selectedDomain   || '（未選択）';
+  document.getElementById('selected-nickname').textContent = selectedNickname || '（未選択）';
+  document.getElementById('dot3').classList.add('active');
 }
 
-function updatePreview() {
-  const wrap = document.getElementById('preview-wrap');
-  wrap.classList.add('changing');
-
-  setTimeout(() => {
-    const bd = brandData[brand];
-    document.getElementById('url-bar').textContent = bd.domains[0];
-    document.getElementById('preview-logo').innerHTML = bd.logo;
-    document.getElementById('preview-title').innerHTML = bd.title;
-    document.getElementById('preview-desc').textContent = bd.desc;
-    document.getElementById('preview-badge').textContent = toneData[tone].badge;
-    document.getElementById('cta-title').textContent = bd.cta;
-    document.getElementById('cta-sub').textContent = bd.ctaSub;
-    document.getElementById('card1-tag').textContent = bd.card1tag;
-    document.getElementById('card1-title').textContent = bd.card1title;
-    document.getElementById('card2-tag').textContent = bd.card2tag;
-    document.getElementById('card2-title').textContent = bd.card2title;
-
-    // Domain chips
-    const list = document.getElementById('domain-list');
-    list.innerHTML = '';
-    bd.domains.forEach((d, i) => {
-      const chip = document.createElement('div');
-      chip.className = 'domain-chip themed-card rounded-xl px-4 py-2.5 shadow font-mono text-sm text-c1 font-bold border border-gray-200 cursor-pointer flex items-center gap-2';
-      chip.innerHTML = `<span class="w-2 h-2 rounded-full bg-c2 inline-block"></span>${d}`;
-      if (i === 0) chip.innerHTML += ` <span class="text-xs bg-c1 text-white rounded px-1.5 ml-1 font-sans font-normal">イチオシ</span>`;
-      list.appendChild(chip);
-    });
-
-    wrap.classList.remove('changing');
-  }, 200);
-}
-
-// ===== PROMPT TEMPLATES =====
-const promptTemplates = {
-  personal: {
-    pro: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: harada-mobile.com / harada-style.jp
-- 運営者: 原田（個人ブランド軸）
-- ターゲット: 格安スマホで月5,000円以上節約したい30〜40代パパ層
-- マネタイズ: 格安SIM・MNPアフィリエイト
-
-## デザイン要件（プロフェッショナル）
-- カラー: ネイビー #1e3a5f / ゴールド #c9a84c / ダークグレー #2d3748
-- トーン: データ重視・ロジカル・信頼感・誠実
-- フォント: 太め・クリーン（Noto Sans JP）
-- レイアウト: 比較表・数値・実績を前面に出す構成
-
-## コンテンツ構成
-1. ヒーローセクション：「原田が実際に節約した月額5,000円」の実績訴求
-2. 格安SIM比較表（主要5社 × 料金/速度/サポート）
-3. MNP乗り換え完全ガイドページ
-4. プロフィール：原田の実体験・信頼性を訴求
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにカスタマイズ
-- アフィリエイトCTAボタンのスタイル（ネイビー背景・ゴールドテキスト）
-- トップページにピックアップ記事3件表示
-
-以上をステップバイステップで実装してください。`,
-
-    friend: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: harada-mobile.com / harada-style.jp
-- 運営者: 原田（個人ブランド軸）
-- ターゲット: 格安スマホ乗り換えに悩む30〜40代パパ層
-- マネタイズ: 格安SIM・MNPアフィリエイト
-
-## デザイン要件（フレンドリー）
-- カラー: オレンジ #f97316 / グリーン #22c55e / ベージュ系
-- トーン: 相談しやすい・隣のアニキ・温かみ・親しみやすさ
-- フォント: 丸みのある読みやすいスタイル
-- レイアウト: 吹き出し・体験談・手書き風アクセントを活用
-
-## コンテンツ構成
-1. ヒーローセクション：「原田と一緒に格安SIMを選ぼう！」の共感訴求
-2. 悩み別おすすめSIM診断（質問3問 → おすすめSIM表示）
-3. 乗り換え体験談ブログ記事（原田の実話ベース）
-4. LINE相談CTAの設置
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにカスタマイズ
-- オレンジ系のCTAボタン・吹き出し風コメントブロック
-- トップページに「今週のおすすめ」ピックアップ表示
-
-以上をステップバイステップで実装してください。`,
-
-    hunter: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: harada-mobile.com / harada-style.jp
-- 運営者: 原田（個人ブランド軸）
-- ターゲット: 今すぐお得に乗り換えたい行動派パパ
-- マネタイズ: 格安SIM・MNPアフィリエイト（高単価案件優先）
-
-## デザイン要件（ハンター）
-- カラー: イエロー #facc15 / ビビットブルー #3b82f6 / レッド #ef4444
-- 背景: ダーク系 #0f172a
-- トーン: お得感・スピード・ワクワク・即行動を促す
-- レイアウト: バナー多め・キャンペーン情報最前面・カウントダウン風
-
-## コンテンツ構成
-1. ヒーローセクション：「今だけ！MNP乗り換えで最大3万円キャッシュバック」
-2. 期間限定キャンペーン一覧（リアルタイム更新風）
-3. 「今すぐ申し込む」CTAを各セクションに配置
-4. 乗り換え手順5ステップ（スピード感を演出）
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにダーク系カスタマイズ
-- イエロー×ブルーの強調CTAボタン
-- 「残り〇日」表示（JavaScriptカウントダウン）
-
-以上をステップバイステップで実装してください。`,
-  },
-  theme: {
-    pro: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: mobile-master.net / mnp-hikaku.com
-- コンセプト: 格安SIM・MNP専門メディア
-- ターゲット: 正確な情報をもとに乗り換えを検討する30〜40代
-- マネタイズ: 格安SIM比較アフィリエイト・案件記事
-
-## デザイン要件（プロフェッショナル）
-- カラー: ネイビー #1e3a5f / ゴールド #c9a84c
-- トーン: 専門性・データ・信頼・権威性
-- レイアウト: 比較表・スペック重視・ランキング形式
-
-## コンテンツ構成
-1. 格安SIM総合ランキング（TOP10 + 選定基準の透明性）
-2. キャリア別詳細比較ページ（楽天/ahamo/povo/UQなど）
-3. MNP手続き完全ガイド
-4. 速度実測データの可視化グラフ
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースに専門メディア風カスタマイズ
-- 比較表プラグイン（TablePress）導入・スタイリング
-- サイドバーに「おすすめランキングTOP3」固定表示
-
-以上をステップバイステップで実装してください。`,
-
-    friend: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: mobile-master.net / mnp-hikaku.com
-- コンセプト: 格安SIM・MNP専門メディア（やさしく解説）
-- ターゲット: 格安SIMに興味はあるが難しそうと感じているパパ層
-- マネタイズ: 格安SIM比較アフィリエイト
-
-## デザイン要件（フレンドリー）
-- カラー: オレンジ #f97316 / グリーン #22c55e
-- トーン: わかりやすさ・安心感・丁寧な解説
-- レイアウト: 吹き出し解説・イラスト風アイコン・ステップ形式
-
-## コンテンツ構成
-1. 「格安SIM初心者ガイド」入門ページ
-2. 用途別おすすめSIM（家族向け・データ重視・通話重視）
-3. 失敗しないMNP手順書（図解つき）
-4. よくある質問コーナー（Q&A形式）
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースに親しみやすい配色にカスタマイズ
-- アコーディオンQ&Aブロックの実装
-- トップページに「あなたに合うSIMは？」診断ウィジェット設置
-
-以上をステップバイステップで実装してください。`,
-
-    hunter: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: mobile-master.net / mnp-hikaku.com
-- コンセプト: 格安SIM最新キャンペーン情報を最速でお届けする専門メディア
-- ターゲット: キャンペーン情報に敏感で即行動できるパパ層
-- マネタイズ: 高単価MNPアフィリエイト
-
-## デザイン要件（ハンター）
-- カラー: イエロー #facc15 / ブルー #3b82f6 / ダーク背景
-- トーン: 速報感・お得感・今すぐ行動・限定感
-- レイアウト: 速報バナー・キャンペーン表・締切カウントダウン
-
-## コンテンツ構成
-1. 【速報】今月のMNPキャンペーンランキング
-2. キャリア別キャッシュバック比較表（毎月更新）
-3. 「申し込みはこちら」CTAを比較表の各行に配置
-4. 乗り換え完了までの最短ルート解説
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにダーク系カスタマイズ
-- JavaScriptによるキャンペーン終了カウントダウン実装
-- モバイル最適化：スマホから1タップで申込ページへ遷移
-
-以上をステップバイステップで実装してください。`,
-  },
-  value: {
-    pro: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: papa-kozukai.com / family-money-save.net
-- コンセプト: パパ層に特化した家計改善・スマホ節約メディア
-- ターゲット: 子育て中で家計を本気で見直したい30〜40代パパ
-- マネタイズ: 格安SIMアフィリエイト + 節約系案件
-
-## デザイン要件（プロフェッショナル）
-- カラー: ネイビー #1e3a5f / ゴールド #c9a84c
-- トーン: 家計改善の実績・数値訴求・信頼できるアドバイザー感
-- レイアウト: 節約金額の可視化・シミュレーター・データグラフ
-
-## コンテンツ構成
-1. 「スマホ代見直しで年間◯万円節約」の実績ページ
-2. 家族構成別・節約シミュレーター（入力フォーム）
-3. 固定費削減ロードマップ（スマホ→保険→光熱費の順）
-4. 月次節約レポート（ブログ記事シリーズ）
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにファイナンス系メディア風カスタマイズ
-- JavaScriptによる節約額シミュレーター実装
-- トップページに「あなたの節約ポテンシャル診断」CTA設置
-
-以上をステップバイステップで実装してください。`,
-
-    friend: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: papa-kozukai.com / family-money-save.net
-- コンセプト: スマホ代節約でパパのお小遣いを増やす応援ブログ
-- ターゲット: お小遣い制で悩む共感しやすいパパ
-- マネタイズ: 格安SIMアフィリエイト
-
-## デザイン要件（フレンドリー）
-- カラー: オレンジ #f97316 / グリーン #22c55e
-- トーン: パパの悩みへの共感・一緒に節約しよう・温かいコミュニティ感
-- レイアウト: 体験談・吹き出し・パパ視点のエピソード
-
-## コンテンツ構成
-1. ヒーロー：「お小遣い月3,000円のパパが格安SIMで逆転した話」
-2. パパ別お小遣いアップ作戦（節約タイプ診断）
-3. 家族を説得する乗り換えトーク術
-4. パパ読者コミュニティ・コメント欄を活性化
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースに温かみのある配色にカスタマイズ
-- 読者投稿型「節約体験談」カスタム投稿タイプの追加
-- LINEオープンチャット誘導ウィジェットの設置
-
-以上をステップバイステップで実装してください。`,
-
-    hunter: `# WordPress ブログ実装依頼
-
-## サイト概要
-- ドメイン候補: papa-kozukai.com / family-money-save.net
-- コンセプト: 今すぐスマホ代を下げてパパのお小遣いを増やす実践ブログ
-- ターゲット: 即行動・即結果を求めるコスパ意識高めパパ
-- マネタイズ: 高単価MNPアフィリエイト
-
-## デザイン要件（ハンター）
-- カラー: イエロー #facc15 / ブルー #3b82f6 / ダーク背景 #0f172a
-- トーン: 今すぐ節約！ワクワク・お得感全開・勝ちに行く感覚
-- レイアウト: 節約金額を大きく表示・今月限定バナー・行動喚起連打
-
-## コンテンツ構成
-1. ヒーロー：「今月中に乗り換えると月額▲4,980円！」
-2. 期間限定キャッシュバックランキング（今月版）
-3. 「パパのお小遣い計算機」（現在の料金 → 格安後の金額をリアル表示）
-4. 申込完了→お小遣い増加までの最短5日ルート
-
-## WordPress実装タスク
-- ConoHa WINGにインストール済みWordPressに対し上記デザインを適用
-- Cocoonテーマをベースにダーク系カスタマイズ
-- 「お小遣い増額シミュレーター」（JS実装：スライダーで現在料金入力→差額表示）
-- 各記事末尾に「今すぐ申し込む」フローティングCTAボタン
-
-以上をステップバイステップで実装してください。`,
-  },
-};
-
-// ===== PROMPT GENERATOR =====
 function generatePrompt() {
-  const tmpl = promptTemplates[brand]?.[tone];
-  if (!tmpl) return;
-
-  const out    = document.getElementById('prompt-output');
-  const status = document.getElementById('prompt-status');
-  const stText = document.getElementById('prompt-status-text');
-  const copyW  = document.getElementById('copy-wrap');
-
-  out.classList.remove('hidden');
-  out.textContent = '';
-  status.classList.remove('hidden');
-  copyW.classList.add('hidden');
-  stText.textContent = 'AIが設計中...';
-
-  const steps = ['ブランド軸を解析中...', 'トンマナを変換中...', 'WordPress構成を生成中...', '完成！'];
-  let si = 0;
-  const statusTimer = setInterval(() => {
-    if (si < steps.length - 1) { stText.textContent = steps[++si]; }
-    else { clearInterval(statusTimer); }
-  }, 400);
-
+  const d    = data[brand];
+  const text = prompts[brand](selectedDomain || d.domains[0].name, selectedNickname || d.nicknames[0].name);
+  const out  = document.getElementById('prompt-output');
+  out.textContent = ''; out.classList.add('cursor', 'active');
+  document.getElementById('copy-wrap').classList.add('hidden');
   let i = 0;
-  function typeChar() {
-    if (i < tmpl.length) {
-      out.textContent += tmpl[i++];
-      out.scrollTop = out.scrollHeight;
-      setTimeout(typeChar, i < 60 ? 18 : 6);
-    } else {
-      clearInterval(statusTimer);
-      status.classList.add('hidden');
-      copyW.classList.remove('hidden');
-    }
-  }
-  setTimeout(typeChar, 600);
+  (function type() {
+    if (i < text.length) { out.textContent += text[i++]; out.scrollTop = out.scrollHeight; setTimeout(type, i < 80 ? 10 : 3); }
+    else { out.classList.remove('cursor'); document.getElementById('copy-wrap').classList.remove('hidden'); document.getElementById('dot4').classList.add('active'); }
+  })();
 }
-
 function copyPrompt() {
-  const text = document.getElementById('prompt-output').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    document.getElementById('copy-icon').textContent = '✅';
+  navigator.clipboard.writeText(document.getElementById('prompt-output').textContent).then(() => {
+    document.getElementById('copy-icon').textContent  = '✅';
     document.getElementById('copy-label').textContent = 'コピー完了！';
-    setTimeout(() => {
-      document.getElementById('copy-icon').textContent = '📋';
-      document.getElementById('copy-label').textContent = 'コピー';
-    }, 2000);
+    setTimeout(() => { document.getElementById('copy-icon').textContent = '📋'; document.getElementById('copy-label').textContent = 'コピー'; }, 2000);
   });
 }
-
-// ===== AI STREAM SIMULATION =====
-function runAI() {
-  const bd = brandData[brand];
-  const t  = toneData[tone];
-  const domains = bd.domains;
-  const phrases = [
-    `🔍 分析中: ${bd.aiPrompt}...`,
-    `🧠 トンマナ「${t.label}」を反映...`,
-    `✅ 候補を生成しました:`,
-    ...domains.map(d => `  → ${d}`)
-  ];
-
-  const out = document.getElementById('ai-output');
-  out.innerHTML = '';
-  let i = 0;
-
-  function next() {
-    if (i >= phrases.length) return;
-    const line = document.createElement('div');
-    line.style.animationDelay = (i * 0.12) + 's';
-    line.className = 'ai-stream leading-relaxed';
-
-    // Stream chars
-    const text = phrases[i];
-    let c = 0;
-    function char() {
-      if (c <= text.length) {
-        line.textContent = text.slice(0, c);
-        c++;
-        setTimeout(char, 25);
-      } else {
-        i++;
-        setTimeout(next, 100);
-      }
-    }
-    out.appendChild(line);
-    char();
-  }
-  next();
-}
-
-// ===== INIT =====
-updatePreview();
 </script>
 </body>
 </html>
