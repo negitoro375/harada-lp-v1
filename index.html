@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>原田さんのブログ開設ナビ | ネギトロブログ</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
     * { font-family: 'Noto Sans JP', sans-serif; }
@@ -194,7 +195,9 @@
 
 <!-- ===== HERO（近接：タイトル・説明・プログレスを一塊に） ===== -->
 <section class="max-w-lg mx-auto px-5 pt-10 pb-2 text-center">
-  <div class="text-5xl mb-5">🎉</div>
+  <div class="flex items-center justify-center w-16 h-16 rounded-2xl mx-auto mb-5" style="background:linear-gradient(135deg,var(--pink),#ff9fb2)">
+    <i data-lucide="rocket" style="width:30px;height:30px;color:white;stroke-width:2"></i>
+  </div>
 
   <!-- 対比：h1は最大サイズ -->
   <h1 class="text-3xl font-black leading-snug mb-3" style="color:var(--text-hi)">
@@ -284,14 +287,16 @@
       <!-- Personal -->
       <div class="brand-card selected" id="card-personal" onclick="selectBrand('personal')">
         <div class="flex items-center gap-3">
-          <span class="text-2xl">👤</span>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#fff0f4">
+            <i data-lucide="user" style="width:20px;height:20px;color:var(--pink);stroke-width:2.5"></i>
+          </div>
           <div class="flex-1">
             <div class="card-title">パーソナルブランド軸</div>
             <div class="card-sub">「原田さん個人」の信頼を積み上げる</div>
           </div>
           <span id="check-personal" class="text-xl font-black" style="color:var(--pink)">✓</span>
         </div>
-        <div class="card-hint">💡 顔出し・実名でやりたい人、ファンをつくりたい人に向いてる</div>
+        <div class="card-hint"><i data-lucide="lightbulb" style="width:13px;height:13px;display:inline;vertical-align:middle;color:#f59e0b;stroke-width:2.5"></i> 顔出し・実名でやりたい人、ファンをつくりたい人に向いてる</div>
         <div class="card-tags">
           <span class="card-tag" style="background:#fff0f4;color:var(--pink);border:1px solid var(--pink-bd)">harada-mobile.com</span>
           <span class="card-tag" style="background:#fff0f4;color:var(--pink);border:1px solid var(--pink-bd)">harada-style.jp</span>
@@ -301,14 +306,16 @@
       <!-- Theme -->
       <div class="brand-card" id="card-theme" onclick="selectBrand('theme')">
         <div class="flex items-center gap-3">
-          <span class="text-2xl">📱</span>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#eff6ff">
+            <i data-lucide="smartphone" style="width:20px;height:20px;color:#3b82f6;stroke-width:2.5"></i>
+          </div>
           <div class="flex-1">
             <div class="card-title">テーマブランド軸</div>
             <div class="card-sub">「格安SIM・MNPといえばここ」で認知</div>
           </div>
           <span id="check-theme" class="text-xl font-black opacity-0" style="color:var(--pink)">✓</span>
         </div>
-        <div class="card-hint">💡 SEOで検索上位を狙いたい人・専門メディアをつくりたい人向け</div>
+        <div class="card-hint"><i data-lucide="lightbulb" style="width:13px;height:13px;display:inline;vertical-align:middle;color:#f59e0b;stroke-width:2.5"></i> SEOで検索上位を狙いたい人・専門メディアをつくりたい人向け</div>
         <div class="card-tags">
           <span class="card-tag" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe">mobile-master.net</span>
           <span class="card-tag" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe">mnp-hikaku.com</span>
@@ -318,14 +325,16 @@
       <!-- Value -->
       <div class="brand-card" id="card-value" onclick="selectBrand('value')">
         <div class="flex items-center gap-3">
-          <span class="text-2xl">💰</span>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#f0fdf4">
+            <i data-lucide="piggy-bank" style="width:20px;height:20px;color:var(--green);stroke-width:2.5"></i>
+          </div>
           <div class="flex-1">
             <div class="card-title">バリューブランド軸</div>
             <div class="card-sub">読者の「節約・家計改善」という未来を約束</div>
           </div>
           <span id="check-value" class="text-xl font-black opacity-0" style="color:var(--pink)">✓</span>
         </div>
-        <div class="card-hint">💡 パパ層・ファミリー層に共感で刺さるコンテンツをつくりたい人向け</div>
+        <div class="card-hint"><i data-lucide="lightbulb" style="width:13px;height:13px;display:inline;vertical-align:middle;color:#f59e0b;stroke-width:2.5"></i> パパ層・ファミリー層に共感で刺さるコンテンツをつくりたい人向け</div>
         <div class="card-tags">
           <span class="card-tag" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">papa-kozukai.com</span>
           <span class="card-tag" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">family-money-save.net</span>
@@ -336,7 +345,7 @@
     <!-- 対比：CTAは最大コントラスト・中央配置 -->
     <div class="text-center">
       <button onclick="generateCandidates()" class="btn-cta">
-        ⚡ AIに候補を出してもらう
+        <i data-lucide="zap" style="width:15px;height:15px;display:inline;vertical-align:middle;stroke-width:2.5"></i> AIに候補を出してもらう
       </button>
     </div>
   </div>
@@ -373,7 +382,7 @@
       <!-- Domain -->
       <div class="rounded-2xl border-2 p-4" style="border-color:var(--pink-bd);background:var(--pink-lt)">
         <div class="flex items-center gap-2 mb-3">
-          <span class="text-base">🌐</span>
+          <i data-lucide="globe" style="width:16px;height:16px;color:var(--pink);stroke-width:2.5;flex-shrink:0"></i>
           <!-- 対比：セクション内タイトルは太く -->
           <div class="font-black text-sm" style="color:var(--text-hi)">ドメイン候補</div>
           <span class="text-xs ml-auto" style="color:var(--text-lo)">タップして選択</span>
@@ -384,7 +393,7 @@
       <!-- Nickname -->
       <div class="rounded-2xl border-2 p-4" style="border-color:#bbf7d0;background:#f0fdf4">
         <div class="flex items-center gap-2 mb-3">
-          <span class="text-base">✏️</span>
+          <i data-lucide="pen-line" style="width:16px;height:16px;color:var(--green);stroke-width:2.5;flex-shrink:0"></i>
           <div class="font-black text-sm" style="color:var(--text-hi)">ニックネーム候補</div>
           <span class="text-xs ml-auto" style="color:var(--text-lo)">タップして選択</span>
         </div>
@@ -395,7 +404,7 @@
     <!-- 選んだ組み合わせ（近接：2項目を横並び） -->
     <div id="selection-result" class="hidden result-card mb-5 fade-up">
       <div class="flex items-center gap-2 mb-3">
-        <span class="text-base">✅</span>
+        <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--green);stroke-width:2.5;flex-shrink:0"></i>
         <div class="font-black text-sm" style="color:var(--text-hi)">選んだ組み合わせ</div>
       </div>
       <div class="grid grid-cols-2 gap-3">
@@ -421,15 +430,17 @@
 
     <!-- 対比：CTA最大 -->
     <div class="rounded-2xl p-6 text-center mb-4" style="background:var(--pink-lt);border:2px solid var(--pink-bd)">
-      <div class="text-3xl mb-2">📖</div>
+      <div class="flex items-center justify-center w-12 h-12 rounded-2xl mx-auto mb-3" style="background:var(--pink)">
+        <i data-lucide="book-open" style="width:24px;height:24px;color:white;stroke-width:2"></i>
+      </div>
       <!-- 対比：CTAタイトルは最大ウェイト -->
       <div class="font-black text-lg mb-1" style="color:var(--text-hi)">次のステップはネギトロブログで！</div>
       <div class="text-sm mb-5" style="color:var(--text-md)">
         ConoHa WINGの申し込み手順・料金を<strong>画像つきで解説</strong>。<br/>
-        アフィリリンクもこちらから🙌
+        アフィリリンクもこちらから <i data-lucide="link" style="width:13px;height:13px;display:inline;vertical-align:middle;stroke-width:2.5"></i>
       </div>
       <a href="https://negitoroblog.online/ipad-conoha-start/" target="_blank" class="btn-cta">
-        🍣 ネギトロブログの記事を見る →
+        <img src="assets/characters/negitoro.png" alt="" style="width:20px;height:20px;display:inline;vertical-align:middle;margin-right:6px;border-radius:50%">ネギトロブログの記事を見る →
       </a>
       <div class="text-xs mt-3" style="color:var(--text-lo)">※記事内のリンクからConoHa WINGに申し込めます</div>
     </div>
@@ -437,8 +448,8 @@
     <!-- Prompt（近接：タイトル・ボタン・出力を1ブロック） -->
     <div class="rounded-2xl overflow-hidden" style="background:var(--navy)">
       <div class="flex items-center gap-2 px-5 py-3 border-b border-white/10">
-        <span>✨</span>
-        <div class="font-black text-white text-sm flex-1">✨ AI相談スターターを作る</div>
+        <i data-lucide="sparkles" style="width:16px;height:16px;color:#fbbf24;stroke-width:2;flex-shrink:0"></i>
+        <div class="font-black text-white text-sm flex-1">AI相談スターターを作る</div>
         <button onclick="generatePrompt()"
           class="text-xs font-bold px-4 py-1.5 rounded-full text-white"
           style="background:var(--pink)">生成する</button>
@@ -446,7 +457,7 @@
       <div id="prompt-output" class="prompt-box px-5 py-4">← 「生成する」を押してClaude/ChatGPTに貼り付けよう</div>
       <div id="copy-wrap" class="hidden px-5 py-2 flex justify-end border-t border-white/10">
         <button onclick="copyPrompt()" class="text-xs flex items-center gap-1" style="color:var(--text-lo)">
-          <span id="copy-icon">📋</span><span id="copy-label">コピー</span>
+          <i id="copy-icon" data-lucide="clipboard" style="width:14px;height:14px;stroke-width:2.5"></i><span id="copy-label">コピー</span>
         </button>
       </div>
     </div>
@@ -618,11 +629,13 @@ function generatePrompt() {
 }
 function copyPrompt() {
   navigator.clipboard.writeText(document.getElementById('prompt-output').textContent).then(() => {
-    document.getElementById('copy-icon').textContent  = '✅';
+    const icon = document.getElementById('copy-icon');
+    icon.setAttribute('data-lucide','check'); lucide.createIcons({nodes:[icon]});
     document.getElementById('copy-label').textContent = 'コピー完了！';
-    setTimeout(() => { document.getElementById('copy-icon').textContent = '📋'; document.getElementById('copy-label').textContent = 'コピー'; }, 2000);
+    setTimeout(() => { icon.setAttribute('data-lucide','clipboard'); lucide.createIcons({nodes:[icon]}); document.getElementById('copy-label').textContent = 'コピー'; }, 2000);
   });
 }
 </script>
+<script>lucide.createIcons();</script>
 </body>
 </html>
