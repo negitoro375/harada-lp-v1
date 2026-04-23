@@ -193,6 +193,14 @@
   </a>
 </header>
 
+<!-- ===== PR表記バナー（景表法対応） ===== -->
+<div style="background:#fff8e1;border-bottom:1px solid #fde68a">
+  <div class="max-w-lg mx-auto px-5 py-2 flex items-center gap-2">
+    <i data-lucide="megaphone" style="width:13px;height:13px;flex-shrink:0;color:#92400e;stroke-width:2.5"></i>
+    <span class="text-xs" style="color:#92400e">本ページにはアフィリエイトリンクが含まれます（PR・広告）</span>
+  </div>
+</div>
+
 <!-- ===== HERO（近接：タイトル・説明・プログレスを一塊に） ===== -->
 <section class="max-w-lg mx-auto px-5 pt-10 pb-2 text-center">
   <div class="flex items-center justify-center w-16 h-16 rounded-2xl mx-auto mb-5" style="background:linear-gradient(135deg,var(--pink),#ff9fb2)">
@@ -428,6 +436,18 @@
       </div>
     </div>
 
+    <!-- ビジネスモデル透明性カード -->
+    <div class="rounded-2xl p-5 mb-4" style="background:#f0f9ff;border:1.5px solid #bae6fd">
+      <div class="flex items-center gap-2 mb-2">
+        <i data-lucide="hand-coins" style="width:16px;height:16px;color:#0284c7;stroke-width:2.5;flex-shrink:0"></i>
+        <div class="font-black text-sm" style="color:#0c4a6e">なぜ11,000円でここまでできるの？</div>
+      </div>
+      <p class="text-xs leading-relaxed" style="color:#0369a1">
+        ConoHa WINGのサーバー契約時に、ネギトロブログがアフィリエイト報酬をいただける仕組みを活用しています。そのため、<strong>お客様へのサポート費用を11,000円という価格に抑えることができています。</strong><br/>
+        どこで収益が発生するかを正直にお伝えすることで、安心してご利用いただきたいと考えています。
+      </p>
+    </div>
+
     <!-- 対比：CTA最大 -->
     <div class="rounded-2xl p-6 text-center mb-4" style="background:var(--pink-lt);border:2px solid var(--pink-bd)">
       <div class="flex items-center justify-center w-12 h-12 rounded-2xl mx-auto mb-3" style="background:var(--pink)">
@@ -439,10 +459,28 @@
         ConoHa WINGの申し込み手順・料金を<strong>画像つきで解説</strong>。<br/>
         アフィリリンクもこちらから <i data-lucide="link" style="width:13px;height:13px;display:inline;vertical-align:middle;stroke-width:2.5"></i>
       </div>
-      <a href="https://negitoroblog.online/ipad-conoha-start/" target="_blank" class="btn-cta">
+      <!-- 同意チェックボックス -->
+      <div class="text-left mb-4 space-y-3 px-1">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" id="consent1" onchange="updateConsent()"
+            class="mt-0.5 flex-shrink-0" style="width:16px;height:16px;accent-color:var(--pink)">
+          <span class="text-xs leading-relaxed" style="color:var(--text-md)">
+            <strong>サービス完了の定義に同意します：</strong>WordPressのインストール完了と、AIを使った初期設定・ドメイン選定のデモ実施をもってサービス提供完了とします。
+          </span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" id="consent2" onchange="updateConsent()"
+            class="mt-0.5 flex-shrink-0" style="width:16px;height:16px;accent-color:var(--pink)">
+          <span class="text-xs leading-relaxed" style="color:var(--text-md)">
+            <strong>免責事項に同意します：</strong>本サービスはブログ構築の技術支援であり、ブログによる収益化や集客を保証するものではありません。
+          </span>
+        </label>
+      </div>
+      <a id="cta-btn" href="https://negitoroblog.online/ipad-conoha-start/" target="_blank"
+        class="btn-cta opacity-40 pointer-events-none transition-opacity duration-200">
         <img src="assets/characters/negitoro.png" alt="" style="width:20px;height:20px;display:inline;vertical-align:middle;margin-right:6px;border-radius:50%">ネギトロブログの記事を見る →
       </a>
-      <div class="text-xs mt-3" style="color:var(--text-lo)">※記事内のリンクからConoHa WINGに申し込めます</div>
+      <div class="text-xs mt-3" style="color:var(--text-lo)">※上記2項目に同意するとボタンが押せます</div>
     </div>
 
     <!-- Prompt（近接：タイトル・ボタン・出力を1ブロック） -->
@@ -626,6 +664,12 @@ function generatePrompt() {
     if (i < text.length) { out.textContent += text[i++]; out.scrollTop = out.scrollHeight; setTimeout(type, i < 80 ? 10 : 3); }
     else { out.classList.remove('cursor'); document.getElementById('copy-wrap').classList.remove('hidden'); document.getElementById('dot4').classList.add('active'); }
   })();
+}
+function updateConsent() {
+  const ok = document.getElementById('consent1').checked && document.getElementById('consent2').checked;
+  const btn = document.getElementById('cta-btn');
+  btn.classList.toggle('opacity-40', !ok);
+  btn.classList.toggle('pointer-events-none', !ok);
 }
 function copyPrompt() {
   navigator.clipboard.writeText(document.getElementById('prompt-output').textContent).then(() => {
